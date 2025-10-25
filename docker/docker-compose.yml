@@ -9,10 +9,10 @@ services:
     environment:
       - TZ=Asia/Seoul
     volumes:
-      - /volume2/docker/taske/nginx:/nginx
-      - /volume2/docker/ssl/hanyahunya.com:/etc/nginx/ssl:ro
+      - ${NGINX_HOST_PATH}:/nginx
+      - ${SSL_HOST_PATH}:/etc/nginx/ssl:ro
     ports:
-      - "27103:443"
+      - "${NGINX_PORT}:443"
     networks:
       - taske-net
     restart: unless-stopped
@@ -36,8 +36,8 @@ services:
     build: ./was/gateway
     image: taske/gateway-service
     container_name: taske-gateway
-    ports:
-      - "8080:8080"
+    # ports:
+    #   - "8080:8080"
     env_file: ./env/gateway.env
     environment:
       - TZ=Asia/Seoul
@@ -110,7 +110,7 @@ services:
       - TZ=Asia/Seoul
     volumes:
       - ./mysql/init-scripts:/docker-entrypoint-initdb.d
-      - ./mysql/data:/var/lib/mysql
+      - ${MYSQL_DATA_HOST_PATH}:/var/lib/mysql
     # ports:
     #   - "3306:3306"
     networks:
@@ -129,7 +129,7 @@ services:
     environment:
       - TZ=Asia/Seoul
     volumes:
-      - ./kafka-data:/kafka/data
+      - ${KAFKA_DATA_HOST_PATH}:/kafka/data
     networks:
       - taske-net
 
@@ -151,5 +151,5 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 192.168.130.0/24
-          gateway: 192.168.130.1
+        - subnet: ${DOCKER_SUBNET}
+          gateway: ${DOCKER_GATEWAY}
