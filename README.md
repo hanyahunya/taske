@@ -33,8 +33,8 @@ Taskeは以下のマイクロサービスで構成されています。
     * **技術スタック**: Spring Boot, Spring Security, JPA, MySQL, Redis（トークン/一時情報保存）、Kafka（イベント発行）。
 
 3.  **User Service**: [User](https://github.com/hanyahunya/taske_user)
-    * **役割**: 認証情報を除く**ユーザー情報管理**。
-    * **主な機能**: ユーザープロファイル情報（国/地域など）管理。
+    * **役割**: 認証情報を除く**ユーザー情報管理**。
+    * **主な機能**: ユーザープロファイル情報（国/地域など）管理。
 
 4.  **Task Service**: [Task](https://github.com/hanyahunya/taske_task)
     * **役割**: **自動化タスク(Task)とモジュール管理**の核心。
