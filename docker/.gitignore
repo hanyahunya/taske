@@ -1,0 +1,17 @@
+# .gitignore
+
+/env/
+.env
+
+/kafka-data/
+
+/mysql/data/
+/mysql/init-scripts/02-*.sql
+/mysql/init-scripts/04-*.sql
+/mysql/init-scripts/06-*.sql
+
+/nginx/config/server/
+/nginx/html/
+/nginx/log/
+
+/was/*/*.jar

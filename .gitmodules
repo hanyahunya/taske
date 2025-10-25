@@ -1,0 +1,21 @@
+[submodule "front"]
+	path = front
+	url = https://github.com/hanyahunya/taske_react.git
+[submodule "msa/gateway"]
+	path = msa/gateway
+	url = https://github.com/hanyahunya/taske_gateway.git
+[submodule "msa/auth"]
+	path = msa/auth
+	url = https://github.com/hanyahunya/taske_auth.git
+[submodule "msa/user"]
+	path = msa/user
+	url = https://github.com/hanyahunya/taske_user.git
+[submodule "msa/task"]
+	path = msa/task
+	url = https://github.com/hanyahunya/taske_task.git
+[submodule "msa/worker"]
+	path = msa/worker
+	url = https://github.com/hanyahunya/taske_worker.git
+[submodule "msa/integration"]
+	path = msa/integration
+	url = https://github.com/hanyahunya/taske_integration.git

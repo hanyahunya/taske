@@ -1,0 +1,155 @@
+services:
+  taske-nginx:
+    build: ./nginx
+    image: taske-nginx
+    container_name: taske-nginx
+    depends_on:
+      - taske-gateway
+    env_file: ./env/nginx.env
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - /volume2/docker/taske/nginx:/nginx
+      - /volume2/docker/ssl/hanyahunya.com:/etc/nginx/ssl:ro
+    ports:
+      - "27103:443"
+    networks:
+      - taske-net
+    restart: unless-stopped
+
+  taske-task:
+    build: ./was/task
+    image: taske/task-service
+    container_name: taske-task
+    # ports:
+    #   - "8081:8080" # gateway 다운등 그런 거 설정하려면 키셈
+    env_file: ./env/task.env
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - taske-mysql
+    networks:
+      - taske-net
+    restart: unless-stopped
+
+  taske-gateway:
+    build: ./was/gateway
+    image: taske/gateway-service
+    container_name: taske-gateway
+    ports:
+      - "8080:8080"
+    env_file: ./env/gateway.env
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - taske-redis
+    networks:
+      - taske-net
+    restart: unless-stopped
+
+  taske-auth:
+    build: ./was/auth
+    image: taske/auth-service
+    container_name: taske-auth
+    env_file: ./env/auth.env
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - taske-redis
+      - taske-mysql
+    networks:
+      - taske-net
+    restart: unless-stopped
+
+  taske-user:
+    build: ./was/user
+    image: taske/user-service
+    container_name: taske-user
+    env_file: ./env/user.env   
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - taske-kafka 
+      - taske-mysql
+    networks:
+      - taske-net
+    restart: unless-stopped
+
+  taske-worker:
+    build: ./was/worker
+    image: taske/worker-service
+    container_name: taske-worker
+    env_file: ./env/worker.env    
+    environment:
+      - TZ=Asia/Seoul
+    depends_on:
+      - taske-kafka
+    networks:
+      - taske-net
+    restart: unless-stopped
+
+  taske-integration:
+    build: ./was/integration
+    image: taske/integration-service
+    container_name: taske-integration
+    env_file: ./env/integration.env  
+    environment:
+      - TZ=Asia/Seoul  
+    depends_on:
+      - taske-kafka
+      - taske-mysql
+    networks:
+      - taske-net
+    restart: unless-stopped
+
+  taske-mysql:
+    image: mysql:8.0
+    container_name: taske-mysql
+    env_file: ./env/mysql.env
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - ./mysql/init-scripts:/docker-entrypoint-initdb.d
+      - ./mysql/data:/var/lib/mysql
+    # ports:
+    #   - "3306:3306"
+    networks:
+      - taske-net
+    restart: always
+
+  taske-kafka:
+    image: apache/kafka:4.1.0
+    container_name: taske-kafka
+    restart: unless-stopped
+    ports:
+      # - "9092:9092"
+      - "29092:29092"
+      # - "9093:9093"
+    env_file: ./env/kafka.env
+    environment:
+      - TZ=Asia/Seoul
+    volumes:
+      - ./kafka-data:/kafka/data
+    networks:
+      - taske-net
+
+  taske-redis:
+    image: redis:6.2.6-alpine
+    container_name: taske-redis
+    restart: unless-stopped
+    # ports:
+    #   - "${REDIS_PORT}:6379"
+    command: redis-server --requirepass ${REDIS_PW}
+    environment:
+      - TZ=Asia/Seoul
+    networks:
+      - taske-net
+
+networks:
+  taske-net:
+    name: taske-net
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.130.0/24
+          gateway: 192.168.130.1
