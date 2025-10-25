@@ -3,7 +3,7 @@
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/hanyahunya/taske)
 [![Tech Stack](https://img.shields.io/badge/Tech-Spring%20Boot,%20Kafka,%20gRPC,%20MySQL,%20Redis-blueviolet)](https://github.com/hanyahunya/taske)
 
-**Taske**는 **"When this happens (Trigger), then do that (Action)"** 방식의 자동화 워크플로우를 생성하고 관리할 수 있는 서비스입니다. MSA(Microservices Architecture)로 설계되어 각 기능이 독립적인 서비스로 분리되어 운영됩니다.
+**Taske**는 **"When this happens (Trigger), then do that (Action)"** 방식의 자동화 워크플로우를 생성하고 관리할 수 있는 서비스입니다. MSA로 설계되어 각 기능이 독립적인 서비스로 분리되어 운영됩니다.
 
 이 리포지토리는 Taske 프로젝트의 모든 마이크로서비스(`gateway`, `auth`, `user`, `task`, `worker`, `integration`)를 Git Submodule로 통합하고, Docker 기반의 배포 환경 설정을 포함하고 있습니다.
 

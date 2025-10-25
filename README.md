@@ -3,7 +3,7 @@
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/hanyahunya/taske)
 [![Tech Stack](https://img.shields.io/badge/Tech-Spring%20Boot,%20Kafka,%20gRPC,%20MySQL,%20Redis-blueviolet)](https://github.com/hanyahunya/taske)
 
-**Taske**は**「もし～なら (Trigger)、～する (Action)」**方式の自動化ワークフローを作成・管理できるサービスです。MSA(Microservices Architecture)で設計されており、各機能が独立したサービスとして分離・運用されます。
+**Taske**は **「もし～なら (Trigger)、～する (Action)」** 方式の自動化ワークフローを作成・管理できるサービスです。MSAで設計されており、各機能が独立したサービスとして分離・運用されます。
 
 このリポジトリは、Taskeプロジェクトの全てのマイクロサービス(`gateway`, `auth`, `user`, `task`, `worker`, `integration`)をGit Submoduleとして統合し、Dockerベースのデプロイ環境設定を含んでいます。
 
@@ -23,41 +23,41 @@
 Taskeは以下のマイクロサービスで構成されています。
 
 1.  **Gateway Service**: [Gateway](https://github.com/hanyahunya/taske_gateway)
-    * **役割**: 外部（フロントエンド）リクエストの**エントリポイント(API Gateway)**の役割。
-    * **主な機能**: リクエストルーティング、**アクセストークンの有効性検証（認証）**、ロードバランシング、共通CORS処理など。
-    * **技術スタック**: Spring Cloud Gateway (WebFlux - Nettyベースの非同期処理)。
+    * **役割**: 外部（フロントエンド）リクエストの**エントリポイント(API Gateway)**の役割。
+    * **主な機能**: リクエストルーティング、**アクセストークンの有効性検証（認証）**、ロードバランシング、共通CORS処理など。
+    * **技術スタック**: Spring Cloud Gateway (WebFlux - Nettyベースの非同期処理)。
 
 2.  **Auth Service**: [Auth](https://github.com/hanyahunya/taske_auth)
-    * **役割**: ユーザー**認証と権限付与**を統括。
-    * **主な機能**: 一般会員登録/ログイン、ソーシャルログイン（Googleなど）、**JWT（Access/Refresh Token）の発行と更新**、セキュリティ関連DB管理（ID、暗号化されたパスワード、ソーシャル連携情報など）。
-    * **技術スタック**: Spring Boot, Spring Security, JPA, MySQL, Redis（トークン/一時情報保存）、Kafka（イベント発行）。
+    * **役割**: ユーザー**認証と権限付与**を統括。
+    * **主な機能**: 一般会員登録/ログイン、ソーシャルログイン（Googleなど）、**JWT（Access/Refresh Token）の発行と更新**、セキュリティ関連DB管理（ID、暗号化されたパスワード、ソーシャル連携情報など）。
+    * **技術スタック**: Spring Boot, Spring Security, JPA, MySQL, Redis（トークン/一時情報保存）、Kafka（イベント発行）。
 
 3.  **User Service**: [User](https://github.com/hanyahunya/taske_user)
     * **役割**: 認証情報を除く**ユーザー情報管理**。
-    * **主な機能**: ユーザープロファイル情報（国/地域など）管理。（現在は重要度が低い）
+    * **主な機能**: ユーザープロファイル情報（国/地域など）管理。
 
 4.  **Task Service**: [Task](https://github.com/hanyahunya/taske_task)
-    * **役割**: **自動化タスク(Task)とモジュール管理**の核心。
-    * **主な機能**:
-        * 利用可能な自動化モジュール(Module_capability - Trigger,Action)定義の照会。
-        * ユーザーTaskの作成、照会、修正、削除（CRUD）。
-        * **Task Trigger管理**: スケジューリング(Cron)、Webhook受信、外部APIポーリングなど、Trigger条件の検知と**イベント発行（Kafka）**。
-        * 管理者機能: 新規自動化モジュールの登録/修正/削除。
+    * **役割**: **自動化タスク(Task)とモジュール管理**の核心。
+    * **主な機能**:
+        * 利用可能な自動化モジュール(Module_capability - Trigger,Action)定義の照会。
+        * ユーザーTaskの作成、照会、修正、削除（CRUD）。
+        * **Task Trigger管理**: スケジューリング(Cron)、Webhook受信、外部APIポーリングなど、Trigger条件の検知と**イベント発行（Kafka）**。
+        * 管理者機能: 新規自動化モジュールの登録/修正/削除。
 
 5.  **Worker Service**: [Worker](https://github.com/hanyahunya/taske_worker)
-    * **役割**: Task ServiceからTrigger発動イベントを受け取り、**実際のAction実行オーケストレーション**を担当。
-    * **主な機能**:
-        * Kafkaから`TriggerFiredEvent`を購読。
-        * Task ServiceにgRPCリクエストを送り、実行するActionリストと詳細情報を照会。
-        * Action定義に従って順次実行（内部ロジック実行またはIntegration Serviceへの外部APIリクエスト委任）。
-        * Action実行結果（Output）を次のActionの入力（Input）として渡すためのコンテキスト管理。
+    * **役割**: Task ServiceからTrigger発動イベントを受け取り、**実際のAction実行オーケストレーション**を担当。
+    * **主な機能**:
+        * Kafkaから`TriggerFiredEvent`を購読。
+        * Task ServiceにgRPCリクエストを送り、実行するActionリストと詳細情報を照会。
+        * Action定義に従って順次実行（内部ロジック実行またはIntegration Serviceへの外部APIリクエスト委任）。
+        * Action実行結果（Output）を次のActionの入力（Input）として渡すためのコンテキスト管理。
 
 6.  **Integration Service**: [Integration](https://github.com/hanyahunya/taske_integration)
-    * **役割**: **外部サービスとの連携**処理専門。
-    * **主な機能**:
-        * ソーシャルログイン時に外部OAuthサービスと通信し、トークン発行とユーザー情報検証。
-        * Worker Serviceのリクエストを受け、外部API（GCP、AWSなど）呼び出しを実行。
-        * 外部サービス認証情報（API Key、OAuth Tokenなど）の**安全な保存と管理**（暗号化）。
+    * **役割**: **外部サービスとの連携**処理専門。
+    * **主な機能**:
+        * ソーシャルログイン時に外部OAuthサービスと通信し、トークン発行とユーザー情報検証。
+        * Worker Serviceのリクエストを受け、外部API（GCP、AWSなど）呼び出しを実行。
+        * 外部サービス認証情報（API Key、OAuth Tokenなど）の**安全な保存と管理**（暗号化）。
 
 ---
 
@@ -68,28 +68,28 @@ Taskeは以下のマイクロサービスで構成されています。
 **Task定義:** *「毎週月曜日の朝9時にGoogle Driveの「チーム共有」フォルダをスキャンし、先週修正された「企画書」ファイルリストをSlackの「企画チーム」チャンネルに自動送信する。」*
 
 1.  **[Task Service] Trigger検知**:
-    * Task Serviceのスケジューラーが毎週月曜日の午前9時になったことを検知します。
-    * 該当するTrigger条件に合うTask情報を確認し、Kafkaに`TriggerFiredEvent`を発行します。（Payload: ユーザーID、Task ID、Trigger基本情報など）
+    * Task Serviceのスケジューラーが毎週月曜日の午前9時になったことを検知します。
+    * 該当するTrigger条件に合うTask情報を確認し、Kafkaに`TriggerFiredEvent`を発行します。（Payload: ユーザーID、Task ID、Trigger基本情報など）
 
 2.  **[Worker Service] イベント受信とAction実行準備**:
-    * Worker ServiceはKafkaから`TriggerFiredEvent`を購読して受信します。
-    * Task IDを利用してTask ServiceにgRPCで**Action実行情報（順序、設定値、API仕様など）をリクエスト**します。
+    * Worker ServiceはKafkaから`TriggerFiredEvent`を購読して受信します。
+    * Task IDを利用してTask ServiceにgRPCで**Action実行情報（順序、設定値、API仕様など）をリクエスト**します。
 
 3.  **[Worker Service] Action 1 実行**:
-    * 最初のActionである「Google Driveファイルリスト照会」を実行します。
-    * このActionは外部Google API呼び出しが必要なため、**Integration ServiceにgRPCでAPIリクエストを委任**します。（Payload: ユーザー認証情報識別子、フォルダID、検索条件など）
-    * **[Integration Service]** は暗号化されたユーザーのGoogle認証情報を照会し、Google Drive APIを呼び出して結果をWorker Serviceに返します。
-    * Worker ServiceはAction 1の結果（ファイルリスト）を**内部実行コンテキストに保存**します。（`action1.output.fileList = [...]`）
+    * 最初のActionである「Google Driveファイルリスト照会」を実行します。
+    * このActionは外部Google API呼び出しが必要なため、**Integration ServiceにgRPCでAPIリクエストを委任**します。（Payload: ユーザー認証情報識別子、フォルダID、検索条件など）
+    * **[Integration Service]** は暗号化されたユーザーのGoogle認証情報を照会し、Google Drive APIを呼び出して結果をWorker Serviceに返します。
+    * Worker ServiceはAction 1の結果（ファイルリスト）を**内部実行コンテキストに保存**します。（`action1.output.fileList = [...]`）
 
 4.  **[Worker Service] Action 2 実行**:
-    * 2番目のActionである「Slackメッセージ送信」を実行します。
-    * Action設定値に `{{action1.output.fileList}}` のような**変数**が含まれている場合があります。Worker Serviceは実行コンテキストの値でこの変数を置換します。（例：「先週修正された企画書リスト：[ファイル1.docx, ファイル2.pptx]」）
-    * 置換されたデータを含めて**Integration ServiceにgRPC, kafkaでSlack APIリクエストを委任**します。
-    * **[Integration Service]** はSlack APIを呼び出してメッセージを送信し、結果をWorker Serviceに返します。
-    * Worker ServiceはAction 2の結果を実行コンテキストに保存します。
+    * 2番目のActionである「Slackメッセージ送信」を実行します。
+    * Action設定値に `{{action1.output.fileList}}` のような**変数**が含まれている場合があります。Worker Serviceは実行コンテキストの値でこの変数を置換します。（例：「先週修正された企画書リスト：[ファイル1.docx, ファイル2.pptx]」）
+    * 置換されたデータを含めて**Integration ServiceにgRPC, kafkaでSlack APIリクエストを委任**します。
+    * **[Integration Service]** はSlack APIを呼び出してメッセージを送信し、結果をWorker Serviceに返します。
+    * Worker ServiceはAction 2の結果を実行コンテキストに保存します。
 
 5.  **[Worker Service] Task実行完了**:
-    * 全てのAction実行が完了したらTask実行を終了します。
+    * 全てのAction実行が完了したらTask実行を終了します。
 
 ---
 
